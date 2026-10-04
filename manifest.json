@@ -1,0 +1,13 @@
+{
+  "id": "gst_portal_downloader",
+  "name": "GSTR Downloader",
+  "version": "1.0.0",
+  "author": "Vishwas Upponi",
+  "category": "TAX & GST",
+  "entrypoint": "entrypoint.py",
+  "entry_class": "GSTPortalDownloaderModule",
+  "ui_page": "web_ui/gst_downloader.html",
+  "page_key": "gst_downloader",
+  "description": "Download GST returns (GSTR-1, GSTR-2A, GSTR-2B, GSTR-3B) directly from GST Portal.",
+  "dependencies": ["requests>=2.31.0", "urllib3>=2.0.0", "openpyxl>=3.1.0"]
+}
