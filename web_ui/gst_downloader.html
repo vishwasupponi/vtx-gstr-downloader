@@ -1,0 +1,389 @@
+<style>
+/* Suppress default Edge/WebView2 password reveal inside input fields */
+input::-ms-reveal,
+input::-ms-clear,
+.module-input::-ms-reveal,
+.module-input::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button {
+  visibility: hidden !important;
+  display: none !important;
+  pointer-events: none !important;
+}
+</style>
+
+<div class="module-view-container">
+  <!-- Title Section -->
+  <div class="module-view-header">
+    <h1 class="module-view-title">GST RETURNS DOWNLOADER</h1>
+    <a href="javascript:void(0)" class="module-instructions-link" onclick="openInstructions()">
+      📖 Click here to view the Instructions
+    </a>
+  </div>
+
+  <!-- 1. Credentials & Configuration Card -->
+  <div class="original-card module-section-card" style="padding: 24px 30px;">
+    <div class="gst-input-grid">
+      <!-- Row 1: Username -->
+      <div class="gst-label-right">Username:</div>
+      <div>
+        <input type="text" id="gst-user" class="module-input" placeholder="Enter username" style="width: 100%;" oninput="onGstDlOptionChange('username', this.value)" />
+      </div>
+
+      <!-- Row 2: Password -->
+      <div class="gst-label-right">Password:</div>
+      <div>
+        <div class="input-with-eye" style="width: 100%;">
+          <input type="password" id="gst-pass" class="module-input" placeholder="Enter password" autocomplete="off" spellcheck="false" oninput="onGstDlOptionChange('password', this.value)" />
+          <button class="eye-btn" onclick="togglePasswordVisibility('gst-pass', this)">👁</button>
+        </div>
+      </div>
+
+      <!-- Row 3: Financial Year -->
+      <div class="gst-label-right">Financial Year:</div>
+      <div>
+        <select id="gst-fy" class="settings-select" style="width: 150px; font-weight: 700;" onchange="onGstDlOptionChange('fy', this.value)">
+          <option value="2026-27" selected>2026-27</option>
+          <option value="2025-26">2025-26</option>
+          <option value="2024-25">2024-25</option>
+          <option value="2023-24">2023-24</option>
+          <option value="2022-23">2022-23</option>
+          <option value="2021-22">2021-22</option>
+          <option value="2020-21">2020-21</option>
+          <option value="2019-20">2019-20</option>
+          <option value="2018-19">2018-19</option>
+          <option value="2017-18">2017-18</option>
+        </select>
+      </div>
+
+      <!-- Row 4: Download Folder -->
+      <div class="gst-label-right">Download Folder:</div>
+      <div>
+        <div class="input-with-eye" style="width: 100%;">
+          <input type="text" id="gst-dl-path" class="module-input" placeholder="Default (Chrome Downloads)" readonly oninput="onGstDlOptionChange('destPath', this.value)" />
+          <button id="btn-browse-gstdl" class="eye-btn" title="Browse Download Folder" onclick="browseDownloadFolder()">📁</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Months Section Header & Card -->
+  <div class="gst-section-outer-header">
+    <h2 class="gst-section-title-large">Select Months</h2>
+    <button id="btn-toggle-months" class="btn-pill btn-pill-secondary btn-compact" onclick="toggleAllMonths()">Deselect All</button>
+  </div>
+  <div class="original-card module-section-card" style="padding: 20px 26px;">
+    <div class="gst-months-grid-4col" id="months-grid">
+      <!-- Col 1 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="April" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">April</span></label>
+      <!-- Col 2 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="May" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">May</span></label>
+      <!-- Col 3 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="June" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">June</span></label>
+      <!-- Col 4 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="July" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">July</span></label>
+
+      <!-- Col 1 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="August" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">August</span></label>
+      <!-- Col 2 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="September" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">September</span></label>
+      <!-- Col 3 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="October" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">October</span></label>
+      <!-- Col 4 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="November" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">November</span></label>
+
+      <!-- Col 1 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="December" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">December</span></label>
+      <!-- Col 2 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="January" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">January</span></label>
+      <!-- Col 3 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="February" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">February</span></label>
+      <!-- Col 4 -->
+      <label class="custom-chk-row"><input type="checkbox" class="chk-month" value="March" checked onchange="syncSelectedMonths()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">March</span></label>
+    </div>
+  </div>
+
+  <!-- 3. Forms Section Header & Card -->
+  <div class="gst-section-outer-header">
+    <h2 class="gst-section-title-large">Select Forms to Download</h2>
+    <button id="btn-toggle-forms" class="btn-pill btn-pill-secondary btn-compact" onclick="toggleAllForms()">Deselect All</button>
+  </div>
+  <div class="original-card module-section-card" style="padding: 20px 26px;">
+    <div class="gst-forms-grid-4col">
+      <label class="custom-chk-row"><input type="checkbox" class="chk-form" value="GSTR-1" checked onchange="syncSelectedForms()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">GSTR-1</span></label>
+      <label class="custom-chk-row"><input type="checkbox" class="chk-form" value="GSTR-2A" checked onchange="syncSelectedForms()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">GSTR-2A</span></label>
+      <label class="custom-chk-row"><input type="checkbox" class="chk-form" value="GSTR-2B" checked onchange="syncSelectedForms()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">GSTR-2B</span></label>
+      <label class="custom-chk-row"><input type="checkbox" class="chk-form" value="GSTR-3B" checked onchange="syncSelectedForms()" /> <span class="m3-checkbox"></span> <span class="chk-label-bold">GSTR-3B</span></label>
+    </div>
+  </div>
+
+  <!-- 4. Action Centered Button Container -->
+  <div class="module-run-container" style="margin-top: 30px;">
+    <div style="display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap;">
+      <button id="btn-start-gst-dl" class="module-btn-run" style="width: 300px; height: 46px; border-radius: 23px;" onclick="startGstDownload()">
+        Start Downloader
+      </button>
+      <button id="btn-stop-gst-dl" class="btn-pill btn-pill-danger" style="height: 46px; border-radius: 23px; display: none; padding: 0 24px;" onclick="stopGstDownload()">
+        ⬛ Stop
+      </button>
+    </div>
+    <div id="gst-dl-status" class="module-status-italic" style="display: none; margin-top: 14px;"></div>
+  </div>
+</div>
+
+<script>
+let allMonthsSelected = true;
+let allFormsSelected = true;
+
+function getDynamicFinancialYears() {
+  const now = new Date();
+  // April (month index 3) onwards starts new FY
+  const currentFyStart = (now.getMonth() + 1 >= 4) ? now.getFullYear() : now.getFullYear() - 1;
+  const years = [];
+  for (let y = currentFyStart; y >= 2017; y--) {
+    const nextY = String(y + 1).slice(-2);
+    years.push(`${y}-${nextY}`);
+  }
+  return years;
+}
+
+function initFinancialYears() {
+  const sel = document.getElementById('gst-fy');
+  if (!sel) return;
+
+  const years = getDynamicFinancialYears();
+  const st = window.VERTEX_STATE ? window.VERTEX_STATE.gst_downloader : null;
+  const currentVal = (st && st.fy) ? st.fy : years[0];
+  
+  sel.innerHTML = years.map(y => `<option value="${y}" ${y === currentVal ? 'selected' : ''}>${y}</option>`).join('');
+  sel.value = currentVal;
+  if (st) st.fy = currentVal;
+}
+
+window.onGstDownloadFinished = function(success, errMsg) {
+  if (window.VERTEX_STATE && window.VERTEX_STATE.gst_downloader) {
+    const st = window.VERTEX_STATE.gst_downloader;
+    st.isRunning = false;
+    if (success) {
+      st.statusColor = '#10B981';
+      st.statusText = "✓ GST Returns download session finished successfully!";
+    } else {
+      st.statusColor = '#EF4444';
+      st.statusText = `⚠ Download Notice: ${errMsg || 'Session stopped or completed.'}`;
+    }
+  }
+  renderGstDownloaderState();
+};
+
+function renderGstDownloaderState() {
+  const st = window.VERTEX_STATE ? window.VERTEX_STATE.gst_downloader : null;
+  if (!st) return;
+
+  const btnStart = document.getElementById('btn-start-gst-dl');
+  const btnStop = document.getElementById('btn-stop-gst-dl');
+  const btnBrowse = document.getElementById('btn-browse-gstdl');
+  const btnMonths = document.getElementById('btn-toggle-months');
+  const btnForms = document.getElementById('btn-toggle-forms');
+  const status = document.getElementById('gst-dl-status');
+  const userInp = document.getElementById('gst-user');
+  const passInp = document.getElementById('gst-pass');
+  const fySelect = document.getElementById('gst-fy');
+  const destInp = document.getElementById('gst-dl-path');
+
+  if (userInp) userInp.value = st.username || '';
+  if (passInp) passInp.value = st.password || '';
+  if (fySelect && st.fy) fySelect.value = st.fy;
+  if (destInp) destInp.value = st.destPath || '';
+
+  if (st.selectedMonths) {
+    document.querySelectorAll('.chk-month').forEach(c => {
+      c.checked = st.selectedMonths.includes(c.value);
+    });
+    const allM = document.querySelectorAll('.chk-month').length === st.selectedMonths.length;
+    if (btnMonths) btnMonths.innerText = allM ? 'Deselect All' : 'Select All';
+  }
+  if (st.selectedForms) {
+    document.querySelectorAll('.chk-form').forEach(c => {
+      c.checked = st.selectedForms.includes(c.value);
+    });
+    const allF = document.querySelectorAll('.chk-form').length === st.selectedForms.length;
+    if (btnForms) btnForms.innerText = allF ? 'Deselect All' : 'Select All';
+  }
+
+  if (st.isRunning) {
+    if (btnStart) {
+      btnStart.disabled = true;
+      btnStart.innerText = '⏳ Downloading Returns...';
+    }
+    if (btnStop) btnStop.style.display = 'inline-flex';
+    if (btnBrowse) btnBrowse.disabled = true;
+    if (btnMonths) btnMonths.disabled = true;
+    if (btnForms) btnForms.disabled = true;
+    if (userInp) userInp.disabled = true;
+    if (passInp) passInp.disabled = true;
+    if (fySelect) fySelect.disabled = true;
+    if (destInp) destInp.disabled = true;
+    document.querySelectorAll('.chk-month, .chk-form').forEach(c => c.disabled = true);
+  } else {
+    if (btnStart) {
+      btnStart.disabled = false;
+      btnStart.innerText = 'Start Downloader';
+    }
+    if (btnStop) btnStop.style.display = 'none';
+    if (btnBrowse) btnBrowse.disabled = false;
+    if (btnMonths) btnMonths.disabled = false;
+    if (btnForms) btnForms.disabled = false;
+    if (userInp) userInp.disabled = false;
+    if (passInp) passInp.disabled = false;
+    if (fySelect) fySelect.disabled = false;
+    if (destInp) destInp.disabled = false;
+    document.querySelectorAll('.chk-month, .chk-form').forEach(c => c.disabled = false);
+  }
+
+  if (status) {
+    if (st.statusText) {
+      status.style.display = 'block';
+      status.style.color = st.statusColor || 'var(--accent)';
+      status.innerText = st.statusText;
+    } else {
+      status.style.display = 'none';
+    }
+  }
+}
+
+function onGstDlOptionChange(key, val) {
+  if (window.VERTEX_STATE && window.VERTEX_STATE.gst_downloader) {
+    window.VERTEX_STATE.gst_downloader[key] = val;
+  }
+}
+
+function syncSelectedMonths() {
+  if (window.VERTEX_STATE && window.VERTEX_STATE.gst_downloader) {
+    const sel = Array.from(document.querySelectorAll('.chk-month:checked')).map(c => c.value);
+    window.VERTEX_STATE.gst_downloader.selectedMonths = sel;
+    const btn = document.getElementById('btn-toggle-months');
+    if (btn) btn.innerText = (sel.length === document.querySelectorAll('.chk-month').length) ? 'Deselect All' : 'Select All';
+  }
+}
+
+function syncSelectedForms() {
+  if (window.VERTEX_STATE && window.VERTEX_STATE.gst_downloader) {
+    const sel = Array.from(document.querySelectorAll('.chk-form:checked')).map(c => c.value);
+    window.VERTEX_STATE.gst_downloader.selectedForms = sel;
+    const btn = document.getElementById('btn-toggle-forms');
+    if (btn) btn.innerText = (sel.length === document.querySelectorAll('.chk-form').length) ? 'Deselect All' : 'Select All';
+  }
+}
+
+async function browseDownloadFolder() {
+  const st = window.VERTEX_STATE.gst_downloader;
+  if (st.isRunning) return;
+
+  if (window.pywebview && window.pywebview.api && window.pywebview.api.browse_folder_dialog) {
+    const folder = await window.pywebview.api.browse_folder_dialog("Select GST Downloads Destination Folder");
+    if (folder) {
+      st.destPath = folder;
+      renderGstDownloaderState();
+    }
+  }
+}
+
+function toggleAllMonths() {
+  const st = window.VERTEX_STATE.gst_downloader;
+  if (st.isRunning) return;
+
+  const checkboxes = document.querySelectorAll('.chk-month');
+  const allChecked = Array.from(checkboxes).every(c => c.checked);
+  checkboxes.forEach(c => c.checked = !allChecked);
+  syncSelectedMonths();
+}
+
+function toggleAllForms() {
+  const st = window.VERTEX_STATE.gst_downloader;
+  if (st.isRunning) return;
+
+  const checkboxes = document.querySelectorAll('.chk-form');
+  const allChecked = Array.from(checkboxes).every(c => c.checked);
+  checkboxes.forEach(c => c.checked = !allChecked);
+  syncSelectedForms();
+}
+
+async function startGstDownload() {
+  const st = window.VERTEX_STATE.gst_downloader;
+  if (st.isRunning) return;
+
+  const u = st.username ? st.username.trim() : '';
+  const p = st.password ? st.password.trim() : '';
+  const fy = st.fy || document.getElementById('gst-fy').value;
+  const dest = st.destPath ? st.destPath.trim() : '';
+
+  if (!u || !p) {
+    alert("Please enter both GST Portal Username and Password.");
+    return;
+  }
+
+  syncSelectedMonths();
+  syncSelectedForms();
+
+  if (!st.selectedMonths || st.selectedMonths.length === 0) {
+    alert("Please select at least one month to download.");
+    return;
+  }
+
+  if (!st.selectedForms || st.selectedForms.length === 0) {
+    alert("Please select at least one return type to download.");
+    return;
+  }
+
+  st.isRunning = true;
+  st.statusColor = 'var(--accent)';
+  st.statusText = "⏳ Initializing automated browser session... Check System Logs for live streaming.";
+  renderGstDownloaderState();
+
+  if (window.pywebview && window.pywebview.api && window.pywebview.api.start_gst_download) {
+    const res = await window.pywebview.api.start_gst_download(u, p, fy, dest, st.selectedForms, st.selectedMonths);
+    if (!res || !res.success) {
+      st.isRunning = false;
+      st.statusColor = '#EF4444';
+      st.statusText = `⚠ Error starting download: ${res ? res.error : 'Unknown'}`;
+      renderGstDownloaderState();
+    }
+  }
+}
+
+async function stopGstDownload() {
+  const st = window.VERTEX_STATE.gst_downloader;
+  if (window.pywebview && window.pywebview.api && window.pywebview.api.stop_gst_download) {
+    await window.pywebview.api.stop_gst_download();
+    st.statusText = "Cancelling download session...";
+    renderGstDownloaderState();
+  }
+}
+
+function togglePasswordVisibility(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.innerText = '🔒';
+  } else {
+    inp.type = 'password';
+    btn.innerText = '👁';
+  }
+}
+
+function openInstructions() {
+  if (window.pywebview && window.pywebview.api) {
+    window.pywebview.api.open_instructions('gstr_downloader');
+  }
+}
+
+// Initial mount execution
+initFinancialYears();
+renderGstDownloaderState();
+</script>
